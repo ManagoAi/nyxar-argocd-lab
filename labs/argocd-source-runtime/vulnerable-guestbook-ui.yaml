@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulnerable-guestbook-ui
+  labels:
+    app: vulnerable-guestbook-ui
+    nyxar.dev/lab-fixture: source-controlled-runtime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vulnerable-guestbook-ui
+  template:
+    metadata:
+      labels:
+        app: vulnerable-guestbook-ui
+        nyxar.dev/lab-fixture: source-controlled-runtime
+    spec:
+      containers:
+        - name: web
+          image: docker.io/library/nginx@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+          ports:
+            - containerPort: 80
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vulnerable-guestbook-ui
+  labels:
+    app: vulnerable-guestbook-ui
+    nyxar.dev/lab-fixture: source-controlled-runtime
+spec:
+  selector:
+    app: vulnerable-guestbook-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
